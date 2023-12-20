@@ -26,7 +26,6 @@ class SignInActivity : AppCompatActivity() {
         val intent = Intent(this, HomeActivity::class.java)
         intent.putExtra("name", "value")
         intent.putExtra("id", "value")
-        startActivity(intent)
 
 
         login.setOnClickListener {
