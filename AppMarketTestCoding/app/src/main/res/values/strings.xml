@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">사과마켓</string>
+    <string name="channel_name">사과마켓</string>
+    <string name="channel_description">중고 물품을 파는 곳 입니다.</string>
+</resources>
