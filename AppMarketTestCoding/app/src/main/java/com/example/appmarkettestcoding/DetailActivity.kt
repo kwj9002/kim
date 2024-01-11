@@ -1,63 +1,84 @@
 package com.example.appmarkettestcoding
 
-import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import com.example.appmarkettestcoding.databinding.ActivityDetailBinding
+import com.google.android.material.snackbar.Snackbar
+import java.text.DecimalFormat
 
 class DetailActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityDetailBinding
-    private lateinit var myItem: MyItem
+
+    private var isLike = false
+
+    private val item: MyItem? by lazy {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra(Constants.ITEM_OBJECT,MyItem::class.java)
+        } else {
+            intent.getParcelableExtra<MyItem>(Constants.ITEM_OBJECT)
+        }
+    }
+
+    private val itemPosition: Int by lazy {
+        intent.getIntExtra(Constants.ITEM_INDEX,0)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        myItem = intent.getParcelableExtra("selected_item") ?: return
+        Log.d("jblee","itemPosition = $itemPosition")
 
-        binding.ivDetailImage.setImageResource(myItem.aImage)
-        binding.tvDetailProName.text = myItem.aProName
-        binding.tvDetailSeller.text = myItem.aSeller
-        binding.tvDetailAddress.text = myItem.aAddress
-        binding.tvDetailPrice.text = myItem.aPrice
-        binding.tvDetailProIntro.text = myItem.aProIntro
+        binding.ivItemImage.setImageDrawable(item?.let {
+            ResourcesCompat.getDrawable(
+                resources,
+                it.Image,
+                null
+            )
+        })
 
-        if (myItem.isLiked) {
-            binding.ivDetailGood.setImageResource(R.drawable.im_heart)
-        } else {
-            binding.ivDetailGood.setImageResource(R.drawable.im_heart_empty)
+        binding.tvSellerName.text = item?.SellerName
+        binding.tvSellerAddress.text = item?.Address
+        binding.tvITemTitle.text = item?.ItemTitle
+        binding.tvITemDetail.text = item?.ItemDetail
+        binding.tvITemDetailPrice.text = DecimalFormat("#,###").format(item?.Price) + "원"
+
+        isLike = item?.isLike == true
+
+        binding.ivDetailLike.setImageResource(if (isLike) {R.drawable.img_like2}else{R.drawable.img_like})
+
+        binding.ivBack.setOnClickListener {
+            exit()
         }
 
-        binding.ivDetailGood.setOnClickListener {
-            toggleLike()
-        }
-
-        binding.ivDetailBack.setOnClickListener {
-            returnResultAndFinish()
-        }
-    }
-
-    private fun toggleLike() {
-        myItem.isLiked = !myItem.isLiked
-
-        if (myItem.isLiked) {
-            binding.ivDetailGood.setImageResource(R.drawable.im_heart)
-            myItem.aGood = (myItem.aGood.toInt() + 1).toString()
-        } else {
-            binding.ivDetailGood.setImageResource(R.drawable.im_heart_empty)
-            if (myItem.aGood.toInt() > 0) {
-                myItem.aGood = (myItem.aGood.toInt() - 1).toString()
+        binding.llDetailLike.setOnClickListener {
+            if(!isLike){
+                binding.ivDetailLike.setImageResource(R.drawable.img_like2)
+                Snackbar.make(binding.constLayout, "관심 목록에 추가되었습니다.", Snackbar.LENGTH_SHORT).show()
+                isLike = true
+            }else {
+                binding.ivDetailLike.setImageResource(R.drawable.img_like)
+                isLike = false
             }
         }
     }
 
-    private fun returnResultAndFinish() {
-        val returnIntent = Intent()
-        returnIntent.putExtra("updated_item", myItem)
-        setResult(Activity.RESULT_OK, returnIntent)
-        finish()
+    fun exit() {
+        val intent = Intent(this, MainActivity::class.java).apply {
+            putExtra("itemIndex", itemPosition)
+            putExtra("isLike", isLike)
+        }
+        setResult(RESULT_OK, intent)
+        if (!isFinishing) finish()
     }
+
+    override fun onBackPressed() {
+        exit()
+    }
+
 }

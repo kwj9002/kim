@@ -4,41 +4,39 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class MyItem(
-    var aImage: Int,
-    val aImageName: String,
-    val aProName: String,
-    val aProIntro: String,
-    val aSeller: String,
-    val aPrice: String,
-    val aAddress: String,
-    var aGood: String = "0",
-    val aChatting: String,
-    var isLiked: Boolean = false
-) : Parcelable {
+    val Image: Int,
+    val ItemTitle: String,
+    val ItemDetail: String,
+    val SellerName: String,
+    val Price: Int,
+    val Address: String,
+    var InterestCnt: Int,
+    val ChatCnt: Int,
+    var isLike: Boolean
+)  : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readString() ?: "0",
-        parcel.readString() ?: "",
+        parcel.readString()?: "",
+        parcel.readString()?: "",
+        parcel.readString()?: "",
+        parcel.readInt(),
+        parcel.readString()?: "",
+        parcel.readInt(),
+        parcel.readInt(),
         parcel.readByte() != 0.toByte()
-    )
+    ) {
+    }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeInt(aImage)
-        parcel.writeString(aImageName)
-        parcel.writeString(aProName)
-        parcel.writeString(aProIntro)
-        parcel.writeString(aSeller)
-        parcel.writeString(aPrice)
-        parcel.writeString(aAddress)
-        parcel.writeString(aGood)
-        parcel.writeString(aChatting)
-        parcel.writeByte(if (isLiked) 1 else 0)
+        parcel.writeInt(Image)
+        parcel.writeString(ItemTitle)
+        parcel.writeString(ItemDetail)
+        parcel.writeString(SellerName)
+        parcel.writeInt(Price)
+        parcel.writeString(Address)
+        parcel.writeInt(InterestCnt)
+        parcel.writeInt(ChatCnt)
+        parcel.writeByte(if (isLike) 1 else 0)
     }
 
     override fun describeContents(): Int {

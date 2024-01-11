@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/fragment_container"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:id="@+id/constLayout"
+    tools:context=".DetailActivity">
 
     <ScrollView
-        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
+        app:layout_constraintBottom_toTopOf="@+id/cl_btmInfo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -18,196 +20,209 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/iv_detail_image"
+                android:id="@+id/iv_itemImage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:scaleType="fitXY"
-                android:src="@drawable/im_usedproduct"
+                android:scaleType="centerCrop"
+                android:src="@drawable/sample_1"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/iv_detail_back"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:src="@drawable/im_back"
-                app:layout_constraintStart_toStartOf="@id/iv_detail_image"
-                app:layout_constraintTop_toTopOf="@id/iv_detail_image" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayout"
+                android:id="@+id/cl_sellerInfo"
                 android:layout_width="match_parent"
-                android:layout_height="65dp"
+                android:layout_height="80dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/iv_detail_image">
-
-                <TextView
-                    android:id="@+id/tv_detail_seller"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:gravity="center_vertical"
-                    android:text="nickname"
-                    android:textColor="@color/black"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toEndOf="@+id/iv_detail_person"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/tv_detail_address"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:text="Street name address"
-                    android:textSize="13sp"
-                    app:layout_constraintStart_toEndOf="@+id/iv_detail_person"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_detail_seller" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/iv_itemImage">
 
                 <ImageView
-                    android:id="@+id/iv_detail_person"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:id="@+id/iv_face"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_marginStart="16dp"
-                    android:src="@drawable/im_user"
+                    android:src="@drawable/img_face3"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/tv_detail_temp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="19dp"
-                    android:layout_marginEnd="16dp"
-                    android:text="39.3°C"
-                    android:textColor="#009688"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="@+id/iv_detail_smail"
-                    app:layout_constraintEnd_toStartOf="@+id/iv_detail_smail"
-                    app:layout_constraintTop_toTopOf="@+id/iv_detail_smail" />
-
-
-                <ImageView
-                    android:id="@+id/iv_detail_smail"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="34dp"
-                    android:src="@drawable/im_lv5"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/tv_detail_mannersTemp"
+                    android:id="@+id/tv_sellerName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="@drawable/shape2"
-                    android:text="매너온도"
-                    android:textColor="#B6B5B5"
-                    android:textSize="13sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    android:layout_marginStart="10dp"
+                    android:text="판매자 이름"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/iv_face"
+                    app:layout_constraintTop_toTopOf="@+id/iv_face" />
 
+                <TextView
+                    android:id="@+id/tv_sellerAddress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="4dp"
+                    android:text="서울시 송파구"
+                    android:textColor="#4C4B4B"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/iv_face"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_sellerName" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:text="39.3 ℃"
+                    android:textColor="#009688"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_face2"
+                    app:layout_constraintEnd_toStartOf="@+id/iv_face2"
+                    app:layout_constraintTop_toTopOf="@+id/iv_face2" />
+
+                <ImageView
+                    android:id="@+id/iv_face2"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/img_face2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tv_sellerName" />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="16dp"
+                    android:text="@string/manner_txt"
+                    android:textColor="#9F9D9D"
+                    android:textSize="13sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/iv_face2" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/tv_detail_proName"
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="4dp"
-                android:text="Used product name"
-                android:maxLines="2"
-                android:ellipsize="end"
-                android:textColor="@color/black"
-                android:textSize="25sp"
-                android:textStyle="bold"
+                android:layout_height="1dp"
+                android:background="@color/grayLine"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+                app:layout_constraintTop_toBottomOf="@+id/cl_sellerInfo" />
 
             <TextView
-                android:id="@+id/tv_detail_proIntro"
+                android:id="@+id/tv_iTemTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:text="Text about used goods"
-                android:textSize="20sp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="16dp"
+                android:text="판매상품"
+                android:textColor="@color/black"
+                android:textSize="24sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_detail_proName" />
+                app:layout_constraintTop_toBottomOf="@+id/cl_sellerInfo" />
+
+            <TextView
+                android:id="@+id/tv_iTemDetail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="16dp"
+                android:text="판매상품 내용"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_iTemTitle" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
+
+    <ImageView
+        android:id="@+id/iv_back"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:src="@drawable/img_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout2"
+        android:id="@+id/cl_btmInfo"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:background="@drawable/shape2"
+        android:layout_height="70dp"
+        android:background="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <ImageView
-            android:id="@+id/iv_detail_good"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/im_heart_empty"
+        <LinearLayout
+            android:id="@+id/ll_detail_like"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:clickable="true"
+            android:focusable="true"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/tv_detail_price"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            <ImageView
+                android:id="@+id/iv_detailLike"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/img_like"/>
+        </LinearLayout>
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="#E1DCDC"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ll_detail_like"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tv_detail_price"
-            android:layout_width="150dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="48dp"
-            android:background="@drawable/shape3"
-            android:gravity="bottom"
-            android:padding="8dp"
-            android:text="PRICE"
+            android:id="@+id/tv_iTemDetailPrice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:text="120,000원"
             android:textColor="@color/black"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/view"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/btn_detail_chatTing"
-            android:layout_width="90dp"
+        <TextView
+            android:layout_width="100dp"
             android:layout_height="35dp"
-            android:background="@drawable/shape4"
-            android:text="채팅하기"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/text_bg_round"
+            android:gravity="center"
+            android:text="@string/chat"
             android:textColor="@color/white"
+            android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.816"
-            app:layout_constraintStart_toEndOf="@+id/tv_detail_price"
             app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
