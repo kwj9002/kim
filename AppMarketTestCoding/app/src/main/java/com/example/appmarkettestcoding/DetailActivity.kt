@@ -26,7 +26,6 @@ class DetailActivity : AppCompatActivity() {
     private val itemPosition: Int by lazy {
         intent.getIntExtra(Constants.ITEM_INDEX,0)
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailBinding.inflate(layoutInflater)
@@ -41,7 +40,6 @@ class DetailActivity : AppCompatActivity() {
                 null
             )
         })
-
         binding.tvSellerName.text = item?.SellerName
         binding.tvSellerAddress.text = item?.Address
         binding.tvITemTitle.text = item?.ItemTitle
@@ -55,7 +53,6 @@ class DetailActivity : AppCompatActivity() {
         binding.ivBack.setOnClickListener {
             exit()
         }
-
         binding.llDetailLike.setOnClickListener {
             if(!isLike){
                 binding.ivDetailLike.setImageResource(R.drawable.img_like2)
@@ -67,7 +64,6 @@ class DetailActivity : AppCompatActivity() {
             }
         }
     }
-
     fun exit() {
         val intent = Intent(this, MainActivity::class.java).apply {
             putExtra("itemIndex", itemPosition)
@@ -76,9 +72,7 @@ class DetailActivity : AppCompatActivity() {
         setResult(RESULT_OK, intent)
         if (!isFinishing) finish()
     }
-
     override fun onBackPressed() {
         exit()
     }
-
 }

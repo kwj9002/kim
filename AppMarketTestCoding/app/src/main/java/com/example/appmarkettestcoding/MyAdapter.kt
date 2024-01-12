@@ -68,8 +68,5 @@ class MyAdapter(private val mItems: MutableList<MyItem>) : RecyclerView.Adapter<
         val tvItemChat = binding.tvChatCnt
         val tvItemLike = binding.tvLikecnt
         val ivAdapterLike = binding.ivLike
-
-
-
     }
 }
