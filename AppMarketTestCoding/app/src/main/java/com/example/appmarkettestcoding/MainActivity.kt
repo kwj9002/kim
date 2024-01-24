@@ -204,8 +204,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     override fun onBackPressed() {
+        super.onBackPressed()
         val ad = AlertDialog.Builder(this)
         ad.setIcon(R.drawable.img_chat)
         ad.setTitle("종료")

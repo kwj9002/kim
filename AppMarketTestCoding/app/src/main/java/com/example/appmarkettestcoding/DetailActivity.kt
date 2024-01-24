@@ -73,6 +73,7 @@ class DetailActivity : AppCompatActivity() {
         if (!isFinishing) finish()
     }
     override fun onBackPressed() {
+        super.onBackPressed()
         exit()
     }
 }
