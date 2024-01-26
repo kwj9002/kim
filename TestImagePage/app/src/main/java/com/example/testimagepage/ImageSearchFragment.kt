@@ -2,7 +2,6 @@ package com.example.testimagepage
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -88,8 +87,6 @@ class ImageSearchFragment : Fragment() {
             requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(binding.editText.windowToken, 0)
 
-        Log.d(TAG, "Fetching data for query: $query with Kakao API key: $KAKAO_API_KEY")
-
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val response = apiService.searchImage(
@@ -102,22 +99,15 @@ class ImageSearchFragment : Fragment() {
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
                         val itemList = response.body()?.documents ?: emptyList()
-                        Log.d(TAG, "API response success. Item count: ${itemList.size}")
 
                         viewModel.itemList = itemList.toMutableList()
 
                         updateRecyclerView(itemList.toMutableList())
                     } else {
-                        val errorBody = response.errorBody()?.string()
-                        Log.e(
-                            TAG,
-                            "API response unsuccessful. Code: ${response.code()}, Error: $errorBody"
-                        )
                         showToast("검색에 실패했습니다.")
                     }
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Exception during API call: ${e.message}", e)
                 showToast("에러가 발생했습니다.")
             }
         }
@@ -138,6 +128,5 @@ class ImageSearchFragment : Fragment() {
 
     private fun onLikeButtonClicked(clickedKakaoImage: KakaoImage) {
         showToast("좋아요 버튼이 눌렸습니다.")
-        Log.d(TAG, "Liked Image: ${clickedKakaoImage.imageUrl}")
     }
 }

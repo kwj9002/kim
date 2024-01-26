@@ -38,17 +38,15 @@ class MyLockerFragment : Fragment() {
         _binding = FragmentMyLockerBinding.inflate(inflater, container, false)
         val rootView = binding.root
 
-        // ViewModel 초기화
         myLockerViewModel = ViewModelProvider(this).get(MyLockerViewModel::class.java)
 
         recyclerView = binding.recyclerViewMyLocker
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        // Adapter 초기화
         val itemList = mutableListOf<KakaoImage>()
         myAdapter = MyAdapter(requireContext(), itemList) { kakaoImage ->
             val isFavorite = myLockerViewModel.isImageFavorite(kakaoImage.imageUrl)
-            myLockerViewModel.setFavorite(kakaoImage.imageUrl, !isFavorite)
+            myLockerViewModel.setFavorite(kakaoImage.imageUrl, isFavorite)
             myAdapter.notifyDataSetChanged()
         }
         recyclerView.adapter = myAdapter
