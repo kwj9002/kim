@@ -3,6 +3,7 @@ package com.example.testimagepage
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -133,6 +134,9 @@ class ImageSearchFragment : Fragment() {
 
         val likedItems = viewModel.itemList
         likedItems.add(clickedKakaoImage)
+
+        Log.d("ImageSearchFragment", "Liked Items: $likedItems")
+
         val editor = sharedPreferences.edit()
         editor.putString(sharedPreferencesKey, Gson().toJson(likedItems))
         editor.apply()

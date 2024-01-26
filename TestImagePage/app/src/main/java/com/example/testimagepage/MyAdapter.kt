@@ -12,7 +12,7 @@ import com.squareup.picasso.Picasso
 
 class MyAdapter(
     private val context: Context,
-    private val itemList: List<KakaoImage>,
+    private var itemList: MutableList<KakaoImage>,
     private val onLikeClickListener: (KakaoImage) -> Unit
 ) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
 
@@ -54,6 +54,12 @@ class MyAdapter(
 
     override fun getItemCount(): Int {
         return itemList.size
+    }
+
+    fun updateData(newItemList: MutableList<KakaoImage>) {
+        itemList.clear()
+        itemList.addAll(newItemList)
+        notifyDataSetChanged()
     }
 
     private fun loadImageFromUrl(url: String, imageView: ImageView) {

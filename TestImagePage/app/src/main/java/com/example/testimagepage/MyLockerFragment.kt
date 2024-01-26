@@ -1,7 +1,9 @@
 package com.example.testimagepage
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.testimagepage.databinding.FragmentMyLockerBinding
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class MyLockerFragment : Fragment() {
     private var _binding: FragmentMyLockerBinding? = null
@@ -36,29 +39,60 @@ class MyLockerFragment : Fragment() {
         recyclerView = binding.recyclerViewMyLocker
         recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
 
-        myAdapter = MyAdapter(requireContext(), myLockerViewModel.getLikedImages()) { kakaoImage ->
-            myLockerViewModel.removeLikedImage(kakaoImage)
-            myAdapter.notifyDataSetChanged()
-            saveLikedImagesToSharedPreferences()
-            showToast("이미지를 즐겨찾기에서 제거했습니다.")
+        sharedPreferences = requireContext().getSharedPreferences(
+            "MyPrefs",
+            Context.MODE_PRIVATE
+        )
+
+        val likedImagesJson = sharedPreferences.getString(sharedPreferencesKey, null)
+        val likedImages = Gson().fromJson<List<KakaoImage>>(
+            likedImagesJson,
+            object : TypeToken<List<KakaoImage>>() {}.type
+        ) ?: emptyList()
+
+        myLockerViewModel.setLikedImages(likedImages)
+
+        myAdapter = MyAdapter(requireContext(), likedImages.toMutableList()) { kakaoImage ->
+            onLikeButtonClicked(kakaoImage)
         }
         recyclerView.adapter = myAdapter
 
         return rootView
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun onLikeButtonClicked(clickedKakaoImage: KakaoImage) {
+        showToast("좋아요 버튼이 눌렸습니다.")
+
+        if (::myLockerViewModel.isInitialized) {
+            val isFavorite = myLockerViewModel.isImageFavorite(clickedKakaoImage.imageUrl)
+
+            if (isFavorite) {
+                myLockerViewModel.removeLikedImage(clickedKakaoImage)
+            } else {
+                myLockerViewModel.addLikedImage(clickedKakaoImage)
+            }
+
+            likedImagesToSharedPreferences()
+            updateLikedImages()
+
+            Log.d("MyLockerFragment", "Updated Liked Images: ${myLockerViewModel.getLikedImages()}")
+        }
     }
 
-    private fun saveLikedImagesToSharedPreferences() {
+    private fun likedImagesToSharedPreferences() {
         val likedImages = myLockerViewModel.getLikedImages()
+
         val likedImagesJson = Gson().toJson(likedImages)
         sharedPreferences.edit().putString(sharedPreferencesKey, likedImagesJson).apply()
     }
 
     private fun showToast(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun updateLikedImages() {
+        val likedImages = myLockerViewModel.getLikedImages()
+
+        myAdapter.updateData(likedImages.toMutableList())
     }
 }
