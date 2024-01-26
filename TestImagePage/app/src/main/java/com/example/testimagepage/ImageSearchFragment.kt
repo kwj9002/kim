@@ -3,7 +3,6 @@ package com.example.testimagepage
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +10,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.Toast
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.testimagepage.databinding.FragmentImageSearchBinding
@@ -28,7 +26,6 @@ class ImageSearchFragment : Fragment() {
 
     private var _binding: FragmentImageSearchBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: ImageSearchViewModel
     private val kaKaoApiKey = "KakaoAK 21e1f67c048db5e84dd85fe16df60f61"
 
     private val apiService: SimpleApi by lazy {
@@ -49,7 +46,6 @@ class ImageSearchFragment : Fragment() {
         _binding = FragmentImageSearchBinding.inflate(inflater, container, false)
         val rootView = binding.root
 
-        viewModel = ViewModelProvider(this)[ImageSearchViewModel::class.java]
 
         sharedPreferences = requireContext().getSharedPreferences(
             "MyPrefs",
@@ -61,7 +57,6 @@ class ImageSearchFragment : Fragment() {
             likedItemsJson,
             object : TypeToken<List<KakaoImage>>() {}.type
         )
-        viewModel.itemList = likedItems?.toMutableList() ?: mutableListOf()
 
         val searchButton: Button = binding.searchButton
         searchButton.setOnClickListener {
@@ -73,7 +68,6 @@ class ImageSearchFragment : Fragment() {
             }
         }
 
-        updateRecyclerView(viewModel.itemList)
 
         return rootView
     }
@@ -101,7 +95,6 @@ class ImageSearchFragment : Fragment() {
                     if (response.isSuccessful) {
                         val itemList = response.body()?.documents ?: emptyList()
 
-                        viewModel.itemList = itemList.toMutableList()
 
                         updateRecyclerView(itemList.toMutableList())
                     } else {
@@ -132,13 +125,5 @@ class ImageSearchFragment : Fragment() {
     private fun onLikeButtonClicked(clickedKakaoImage: KakaoImage) {
         showToast("좋아요 버튼이 눌렸습니다.")
 
-        val likedItems = viewModel.itemList
-        likedItems.add(clickedKakaoImage)
-
-        Log.d("ImageSearchFragment", "Liked Items: $likedItems")
-
-        val editor = sharedPreferences.edit()
-        editor.putString(sharedPreferencesKey, Gson().toJson(likedItems))
-        editor.apply()
     }
 }
