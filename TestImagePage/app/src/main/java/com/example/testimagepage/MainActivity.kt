@@ -3,7 +3,6 @@ package com.example.testimagepage
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import com.example.testimagepage.databinding.ActivityMainBinding
@@ -11,7 +10,6 @@ import com.example.testimagepage.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
-    private val viewModel: ImageSearchViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,7 +20,6 @@ class MainActivity : AppCompatActivity() {
                 setFragment(ImageSearchFragment())
             }
             fragment2Btn.setOnClickListener {
-                viewModel.clearData()
                 setFragment(MyLockerFragment())
             }
         }
