@@ -1,7 +1,9 @@
 package com.example.testimagepage
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +15,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.testimagepage.databinding.FragmentImageSearchBinding
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,9 +29,7 @@ class ImageSearchFragment : Fragment() {
     private var _binding: FragmentImageSearchBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: ImageSearchViewModel
-    private val KAKAO_API_KEY = "KakaoAK 21e1f67c048db5e84dd85fe16df60f61"
-
-    private val TAG = ImageSearchFragment::class.java.simpleName
+    private val kaKaoApiKey = "KakaoAK 21e1f67c048db5e84dd85fe16df60f61"
 
     private val apiService: SimpleApi by lazy {
         Retrofit.Builder()
@@ -37,19 +39,8 @@ class ImageSearchFragment : Fragment() {
             .create(SimpleApi::class.java)
     }
 
-    companion object {
-        private const val ARG_PARAM1 = "param1"
-        private const val ARG_PARAM2 = "param2"
-
-        @JvmStatic
-        fun newInstance(param1: String? = null, param2: String? = null) =
-            ImageSearchFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
+    private val sharedPreferencesKey = "LIKED_ITEMS"
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,7 +49,19 @@ class ImageSearchFragment : Fragment() {
         _binding = FragmentImageSearchBinding.inflate(inflater, container, false)
         val rootView = binding.root
 
-        viewModel = ViewModelProvider(this).get(ImageSearchViewModel::class.java)
+        viewModel = ViewModelProvider(this)[ImageSearchViewModel::class.java]
+
+        sharedPreferences = requireContext().getSharedPreferences(
+            "MyPrefs",
+            Context.MODE_PRIVATE
+        )
+
+        val likedItemsJson = sharedPreferences.getString(sharedPreferencesKey, null)
+        val likedItems = Gson().fromJson<List<KakaoImage>>(
+            likedItemsJson,
+            object : TypeToken<List<KakaoImage>>() {}.type
+        )
+        viewModel.itemList = likedItems?.toMutableList() ?: mutableListOf()
 
         val searchButton: Button = binding.searchButton
         searchButton.setOnClickListener {
@@ -70,9 +73,7 @@ class ImageSearchFragment : Fragment() {
             }
         }
 
-        viewModel.itemList?.let { itemList ->
-            updateRecyclerView(itemList)
-        }
+        updateRecyclerView(viewModel.itemList)
 
         return rootView
     }
@@ -90,7 +91,7 @@ class ImageSearchFragment : Fragment() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val response = apiService.searchImage(
-                    apiKey = KAKAO_API_KEY,
+                    apiKey = kaKaoApiKey,
                     query = query,
                     page = 1,
                     size = 80
@@ -121,12 +122,23 @@ class ImageSearchFragment : Fragment() {
         val recyclerView: RecyclerView = binding.imageSearchRecyclerView
         recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
 
-        recyclerView.adapter = MyAdapter(requireContext(), itemList) { clickedKakaoImage ->
+        val myAdapter = MyAdapter(requireContext(), itemList) { clickedKakaoImage ->
             onLikeButtonClicked(clickedKakaoImage)
         }
+
+        recyclerView.adapter = myAdapter
     }
 
     private fun onLikeButtonClicked(clickedKakaoImage: KakaoImage) {
         showToast("좋아요 버튼이 눌렸습니다.")
+
+        val likedItems = viewModel.itemList
+        likedItems.add(clickedKakaoImage)
+
+        Log.d("ImageSearchFragment", "Liked Items: $likedItems")
+
+        val editor = sharedPreferences.edit()
+        editor.putString(sharedPreferencesKey, Gson().toJson(likedItems))
+        editor.apply()
     }
 }
