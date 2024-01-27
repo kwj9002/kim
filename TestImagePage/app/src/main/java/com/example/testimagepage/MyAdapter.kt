@@ -56,12 +56,6 @@ class MyAdapter(
         return itemList.size
     }
 
-    fun updateData(newItemList: MutableList<KakaoImage>) {
-        itemList.clear()
-        itemList.addAll(newItemList)
-        notifyDataSetChanged()
-    }
-
     private fun loadImageFromUrl(url: String, imageView: ImageView) {
         Picasso.get().load(url).into(imageView)
     }

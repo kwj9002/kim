@@ -53,7 +53,7 @@ class ImageSearchFragment : Fragment() {
         )
 
         val likedItemsJson = sharedPreferences.getString(sharedPreferencesKey, null)
-        val likedItems = Gson().fromJson<List<KakaoImage>>(
+        Gson().fromJson<List<KakaoImage>>(
             likedItemsJson,
             object : TypeToken<List<KakaoImage>>() {}.type
         )
