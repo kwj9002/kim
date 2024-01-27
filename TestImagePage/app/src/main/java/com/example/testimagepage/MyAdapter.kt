@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class MyAdapter(
     private val context: Context,
@@ -34,7 +36,10 @@ class MyAdapter(
         loadImageFromUrl(kakaoImage.imageUrl, holder.imageView)
 
         holder.textSiteName.text = kakaoImage.siteName
-        holder.textTime.text = kakaoImage.datetime
+
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val formattedDate = dateFormat.format(kakaoImage.datetime)
+        holder.textTime.text = formattedDate
 
         updateFavoriteImage(holder.favoriteImageView, kakaoImage.isFavorite)
 
@@ -54,12 +59,6 @@ class MyAdapter(
 
     override fun getItemCount(): Int {
         return itemList.size
-    }
-
-    fun updateData(newItemList: MutableList<KakaoImage>) {
-        itemList.clear()
-        itemList.addAll(newItemList)
-        notifyDataSetChanged()
     }
 
     private fun loadImageFromUrl(url: String, imageView: ImageView) {

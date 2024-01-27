@@ -1,6 +1,7 @@
 package com.example.testimagepage
 
 import com.google.gson.annotations.SerializedName
+import java.util.Date
 
 data class KakaoImage(
     @SerializedName("display_sitename")
@@ -10,7 +11,7 @@ data class KakaoImage(
     val imageUrl: String,
     var isFavorite: Boolean = false,
     @SerializedName("datetime")
-    val datetime: String
+    val datetime: Date
 )
 
 data class MetaData(
