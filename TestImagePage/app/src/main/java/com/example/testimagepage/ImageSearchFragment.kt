@@ -122,8 +122,24 @@ class ImageSearchFragment : Fragment() {
         recyclerView.adapter = myAdapter
     }
 
-    private fun onLikeButtonClicked(clickedKakaoImage: KakaoImage) {
+    private fun onLikeButtonClicked(clickedKaKaoImage: KakaoImage) {
         showToast("좋아요 버튼이 눌렸습니다.")
 
+        val likedItemsJson = sharedPreferences.getString(sharedPreferencesKey, null)
+        val likedItems = Gson().fromJson<List<KakaoImage>>(
+            likedItemsJson,
+            object : TypeToken<List<KakaoImage>>() {}.type
+        )?.toMutableList() ?: mutableListOf()
+
+        if (!likedItems.contains(clickedKaKaoImage)) {
+            likedItems.add(clickedKaKaoImage)
+
+            val likedItemsJsonUpdated = Gson().toJson(likedItems)
+            sharedPreferences.edit().putString(sharedPreferencesKey, likedItemsJsonUpdated).apply()
+
+            showToast("이미지가 좋아요 목록에 추가되었습니다.")
+        } else {
+            showToast("이미지는 이미 좋아요 목록에 있습니다.")
+        }
     }
 }
