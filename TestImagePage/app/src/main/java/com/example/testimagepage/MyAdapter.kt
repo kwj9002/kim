@@ -49,7 +49,6 @@ class MyAdapter(
 
             updateFavoriteImage(holder.favoriteImageView, kakaoImage.isFavorite)
 
-            showToast(if (kakaoImage.isFavorite) "이미지를 즐겨찾기에 추가했습니다." else "이미지를 즐겨찾기에서 제거했습니다.")
         }
     }
 
@@ -63,9 +62,5 @@ class MyAdapter(
 
     private fun loadImageFromUrl(url: String, imageView: ImageView) {
         Picasso.get().load(url).into(imageView)
-    }
-
-    private fun showToast(message: String) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 }
