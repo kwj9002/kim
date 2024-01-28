@@ -63,8 +63,6 @@ class ImageSearchFragment : Fragment() {
             val query = binding.editText.text.toString()
             if (query.isNotEmpty()) {
                 fetchData(query)
-            } else {
-                showToast("검색어를 입력해주세요.")
             }
         }
 
@@ -97,12 +95,11 @@ class ImageSearchFragment : Fragment() {
 
 
                         updateRecyclerView(itemList.toMutableList())
-                    } else {
-                        showToast("검색에 실패했습니다.")
+
                     }
                 }
             } catch (e: Exception) {
-                showToast("에러가 발생했습니다.")
+
             }
         }
     }
@@ -123,7 +120,6 @@ class ImageSearchFragment : Fragment() {
     }
 
     private fun onLikeButtonClicked(clickedKaKaoImage: KakaoImage) {
-        showToast("좋아요 버튼이 눌렸습니다.")
 
         val likedItemsJson = sharedPreferences.getString(sharedPreferencesKey, null)
         val likedItems = Gson().fromJson<List<KakaoImage>>(
@@ -137,9 +133,6 @@ class ImageSearchFragment : Fragment() {
             val likedItemsJsonUpdated = Gson().toJson(likedItems)
             sharedPreferences.edit().putString(sharedPreferencesKey, likedItemsJsonUpdated).apply()
 
-            showToast("이미지가 좋아요 목록에 추가되었습니다.")
-        } else {
-            showToast("이미지는 이미 좋아요 목록에 있습니다.")
         }
     }
 }
