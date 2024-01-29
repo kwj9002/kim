@@ -4,7 +4,6 @@ import com.google.gson.annotations.SerializedName
 import java.util.Date
 
 data class KakaoImage(
-
     @SerializedName("display_sitename")
     val siteName: String,
     val collection: String,

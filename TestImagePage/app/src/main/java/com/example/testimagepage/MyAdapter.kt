@@ -6,7 +6,6 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
@@ -48,7 +47,6 @@ class MyAdapter(
             onLikeClickListener.invoke(kakaoImage)
 
             updateFavoriteImage(holder.favoriteImageView, kakaoImage.isFavorite)
-
         }
     }
 
@@ -58,6 +56,12 @@ class MyAdapter(
 
     override fun getItemCount(): Int {
         return itemList.size
+    }
+
+    fun updateData(images: List<KakaoImage>) {
+        itemList.clear()
+        itemList.addAll(images)
+        notifyDataSetChanged()
     }
 
     private fun loadImageFromUrl(url: String, imageView: ImageView) {
