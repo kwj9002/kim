@@ -90,7 +90,7 @@ class ImageSearchFragment : Fragment() {
 
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
-                        val itemList = response.body()?.documents ?: emptyList()
+                        val itemList = response.body()?.documents?.map { it.copy() } ?: emptyList()
                         updateRecyclerView(itemList.toMutableList())
                     }
                 }
@@ -117,10 +117,22 @@ class ImageSearchFragment : Fragment() {
             object : TypeToken<List<KakaoImage>>() {}.type
         )?.toMutableList() ?: mutableListOf()
 
-        if (!likedItems.contains(clickedKaKaoImage)) {
+        val existingLikedItem = likedItems.find { it.imageUrl == clickedKaKaoImage.imageUrl }
+
+        if (existingLikedItem != null) {
+            existingLikedItem.isFavorite = true
+        } else {
+            clickedKaKaoImage.isFavorite = true
             likedItems.add(clickedKaKaoImage)
-            val likedItemsJsonUpdated = Gson().toJson(likedItems)
-            sharedPreferences.edit().putString(sharedPreferencesKey, likedItemsJsonUpdated).apply()
+        }
+
+        val likedItemsJsonUpdated = Gson().toJson(likedItems)
+        sharedPreferences.edit().putString(sharedPreferencesKey, likedItemsJsonUpdated).apply()
+
+        (requireActivity() as? MainActivity)?.onImageSelected(likedItems.filter { it.isFavorite })
+
+        for (likedItem in likedItems.filter { it.isFavorite }) {
+            println("ImageSearchFragment: 좋아요 누른 이미지 URL: ${likedItem.imageUrl}")
         }
     }
 }

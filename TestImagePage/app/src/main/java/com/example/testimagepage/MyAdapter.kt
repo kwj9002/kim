@@ -47,7 +47,6 @@ class MyAdapter(
             onLikeClickListener.invoke(kakaoImage)
 
             updateFavoriteImage(holder.favoriteImageView, kakaoImage.isFavorite)
-
         }
     }
 
@@ -57,6 +56,12 @@ class MyAdapter(
 
     override fun getItemCount(): Int {
         return itemList.size
+    }
+
+    fun updateData(images: List<KakaoImage>) {
+        itemList.clear()
+        itemList.addAll(images)
+        notifyDataSetChanged()
     }
 
     private fun loadImageFromUrl(url: String, imageView: ImageView) {

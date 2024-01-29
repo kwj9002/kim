@@ -3,6 +3,7 @@ package com.example.testimagepage
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +17,6 @@ import com.google.gson.reflect.TypeToken
 class MyLockerFragment : Fragment() {
     private var _binding: FragmentMyLockerBinding? = null
     private val binding get() = _binding
-
     private lateinit var recyclerView: RecyclerView
     private lateinit var myAdapter: MyAdapter
     private lateinit var sharedPreferences: SharedPreferences
@@ -42,10 +42,27 @@ class MyLockerFragment : Fragment() {
             object : TypeToken<List<KakaoImage>>() {}.type
         ) ?: emptyList()
 
-        myAdapter = MyAdapter(requireContext(), likedImages.toMutableList()) { kakaoImage ->
+        myAdapter = MyAdapter(requireContext(), likedImages.toMutableList()) { clickedKakaoImage ->
         }
+
         recyclerView.adapter = myAdapter
 
         return binding?.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+        recyclerView.adapter = null
+    }
+
+    fun onImagesReceived(images: List<KakaoImage>) {
+        Log.d("MyLockerFragment", "이미지를 받았습니다. 이미지 수: ${images.size}")
+
+        myAdapter.updateData(images)
+
+        for (receivedImage in images) {
+            Log.d("MyLockerFragment", "이미지를 받았습니다. URL: ${receivedImage.imageUrl}")
+        }
     }
 }
