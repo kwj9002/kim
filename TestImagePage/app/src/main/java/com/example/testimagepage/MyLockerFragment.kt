@@ -44,7 +44,6 @@ class MyLockerFragment : Fragment() {
         ) ?: emptyList()
 
         myAdapter = MyAdapter(requireContext(), likedImages.toMutableList()) { kakaoImage ->
-            // Your adapter click listener logic
         }
         recyclerView.adapter = myAdapter
 
