@@ -12,6 +12,7 @@ class MainActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private val selectedImagesList: MutableList<KakaoImage> = mutableListOf()
+    private var initialFragment: Fragment = ImageSearchFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,18 +20,21 @@ class MainActivity : AppCompatActivity() {
 
         binding.apply {
             fragment1Btn.setOnClickListener {
-                setFragment(ImageSearchFragment())
+                initialFragment = ImageSearchFragment()
+                setFragment(initialFragment)
             }
             fragment2Btn.setOnClickListener {
-                setFragment(MyLockerFragment())
+                val myLockerFragment = MyLockerFragment()
+                setFragment(myLockerFragment)
+
+                myLockerFragment.onImagesReceived(selectedImagesList)
             }
         }
 
         if (savedInstanceState == null) {
-            setFragment(ImageSearchFragment())
+            setFragment(initialFragment)
         }
     }
-
     private fun setFragment(frag: Fragment) {
         supportFragmentManager.commit {
             replace(R.id.frameLayout, frag)
@@ -55,16 +59,8 @@ class MainActivity : AppCompatActivity() {
         selectedImagesList.clear()
         selectedImagesList.addAll(selectedImages)
 
-        for (selectedImage in selectedImagesList) {
-            println("MainActivity: 선택된 이미지 URL: ${selectedImage.imageUrl}")
-        }
-
         val myLockerFragment = supportFragmentManager.findFragmentByTag(MyLockerFragment::class.java.simpleName) as? MyLockerFragment
         myLockerFragment?.onImagesReceived(selectedImagesList)
-
-        for (selectedImage in selectedImagesList) {
-            println("MainActivity: MyLockerFragment에 이미지 URL 전송: ${selectedImage.imageUrl}")
-        }
 
         Log.d("MainActivity", "전송된 이미지 수: ${selectedImagesList.size}")
     }
