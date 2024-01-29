@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.testimagepage.databinding.FragmentImageSearchBinding
 import com.example.testimagepage.databinding.FragmentMyLockerBinding
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
