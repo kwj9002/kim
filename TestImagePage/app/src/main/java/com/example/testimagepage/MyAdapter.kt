@@ -38,8 +38,8 @@ class MyAdapter(
         holder.textSiteName.text = kakaoImage.siteName
 
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        val formattedDate = dateFormat.format(kakaoImage.datetime)
-        holder.textTime.text = formattedDate
+        val date = dateFormat.format(kakaoImage.datetime)
+        holder.textTime.text = date
 
         updateFavoriteImage(holder.favoriteImageView, kakaoImage.isFavorite)
 
