@@ -118,7 +118,7 @@ class ImageSearchFragment : Fragment() {
         val existingLikedItem = likedItems.find { it.imageUrl == clickedKaKaoImage.imageUrl }
 
         if (existingLikedItem != null) {
-            existingLikedItem.isFavorite = true
+            existingLikedItem.isFavorite = !existingLikedItem.isFavorite
         } else {
             clickedKaKaoImage.isFavorite = true
             likedItems.add(clickedKaKaoImage)

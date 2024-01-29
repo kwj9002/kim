@@ -18,7 +18,7 @@ class MyLockerFragment : Fragment() {
     private var _binding: FragmentMyLockerBinding? = null
     private val binding get() = _binding
     private lateinit var recyclerView: RecyclerView
-    private lateinit var myAdapter: MyAdapter
+    private lateinit var myLockerAdapter: MyLockerAdapter
     private lateinit var sharedPreferences: SharedPreferences
     private val sharedPreferencesKey = "LIKED_IMAGES"
 
@@ -28,7 +28,7 @@ class MyLockerFragment : Fragment() {
     ): View? {
         _binding = FragmentMyLockerBinding.inflate(inflater, container, false)
 
-        recyclerView = binding?.recyclerViewMyLocker ?: RecyclerView(requireContext())
+        recyclerView = binding?.MyLockerRecyclerView ?: RecyclerView(requireContext())
         recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
 
         sharedPreferences = requireContext().getSharedPreferences(
@@ -42,10 +42,10 @@ class MyLockerFragment : Fragment() {
             object : TypeToken<List<KakaoImage>>() {}.type
         ) ?: emptyList()
 
-        myAdapter = MyAdapter(requireContext(), likedImages.toMutableList()) { clickedKakaoImage ->
+        myLockerAdapter = MyLockerAdapter(requireContext(), likedImages.toMutableList()) { clickedImage ->
         }
 
-        recyclerView.adapter = myAdapter
+        recyclerView.adapter = myLockerAdapter
 
         return binding?.root
     }
@@ -59,7 +59,9 @@ class MyLockerFragment : Fragment() {
     fun onImagesReceived(images: List<KakaoImage>) {
         Log.d("MyLockerFragment", "이미지를 받았습니다. 이미지 수: ${images.size}")
 
-        myAdapter.updateData(images)
+        activity?.runOnUiThread {
+            myLockerAdapter.updateData(images)
+        }
 
         for (receivedImage in images) {
             Log.d("MyLockerFragment", "이미지를 받았습니다. URL: ${receivedImage.imageUrl}")

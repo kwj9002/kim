@@ -3,25 +3,24 @@ package com.example.testimagepage
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class MyAdapter(
+class MyLockerAdapter(
     private val context: Context,
     private var itemList: MutableList<KakaoImage>,
-    private val onLikeClickListener: (KakaoImage) -> Unit
-) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
+    private val onImageClickListener: (KakaoImage) -> Unit
+) : RecyclerView.Adapter<MyLockerAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val imageView: ImageView = view.findViewById(R.id.imageview)
         val textSiteName: TextView = view.findViewById(R.id.display_sitename)
         val textTime: TextView = view.findViewById(R.id.datetime)
-        val favoriteImageView: ImageView = view.findViewById(R.id.favoriteButton)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -40,19 +39,8 @@ class MyAdapter(
         val date = dateFormat.format(kakaoImage.datetime)
         holder.textTime.text = date
 
-        updateFavoriteImage(holder.favoriteImageView, kakaoImage.isFavorite)
-
-        holder.favoriteImageView.setOnClickListener {
-            kakaoImage.isFavorite = !kakaoImage.isFavorite
-            onLikeClickListener.invoke(kakaoImage)
-
-            updateFavoriteImage(holder.favoriteImageView, kakaoImage.isFavorite)
-        }
-    }
-
-    private fun updateFavoriteImage(imageView: ImageView, isFavorite: Boolean) {
-        imageView.post {
-            imageView.setImageResource(if (isFavorite) R.drawable.ic_favorite else R.drawable.ic_favorite_filled)
+        holder.itemView.setOnClickListener {
+            onImageClickListener.invoke(kakaoImage)
         }
     }
 
@@ -60,9 +48,13 @@ class MyAdapter(
         return itemList.size
     }
 
+    fun updateData(images: List<KakaoImage>) {
+        itemList.clear()
+        itemList.addAll(images)
+        notifyDataSetChanged()
+    }
+
     private fun loadImageFromUrl(url: String, imageView: ImageView) {
-        Picasso.get()
-            .load(url)
-            .into(imageView)
+        Picasso.get().load(url).into(imageView)
     }
 }
