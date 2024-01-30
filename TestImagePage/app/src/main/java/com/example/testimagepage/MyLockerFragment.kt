@@ -57,7 +57,6 @@ class MyLockerFragment : Fragment() {
     }
 
     fun onImagesReceived(images: List<KakaoImage>) {
-        Log.d("MyLockerFragment", "이미지를 받았습니다. 이미지 수: ${images.size}")
 
         activity?.runOnUiThread {
             myLockerAdapter.updateData(images)
