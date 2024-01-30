@@ -110,11 +110,11 @@ class ImageSearchFragment : Fragment() {
         val recyclerView: RecyclerView? = binding?.imageSearchRecyclerView
         recyclerView?.layoutManager = GridLayoutManager(requireContext(), 2)
 
-        val myAdapter = MyAdapter(requireContext(), itemList) { clickedKakaoImage ->
+        val imageSearchAdapter = ImageSearchAdapter(requireContext(), itemList) { clickedKakaoImage ->
             onLikeButtonClicked(clickedKakaoImage)
         }
 
-        recyclerView?.adapter = myAdapter
+        recyclerView?.adapter = imageSearchAdapter
 
         val itemListJson = Gson().toJson(itemList)
         sharedPreferences.edit().putString(savedSearchDataKey, itemListJson).apply()
