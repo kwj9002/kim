@@ -12,16 +12,18 @@ class MainActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private val selectedImagesList: MutableList<KakaoImage> = mutableListOf()
-    private var initialFragment: Fragment = ImageSearchFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        if (savedInstanceState == null) {
+            setFragment(ImageSearchFragment())
+        }
+
         binding.apply {
             fragment1Btn.setOnClickListener {
-                initialFragment = ImageSearchFragment()
-                setFragment(initialFragment)
+                setFragment(ImageSearchFragment())
             }
             fragment2Btn.setOnClickListener {
                 val myLockerFragment = MyLockerFragment()
@@ -30,11 +32,8 @@ class MainActivity : AppCompatActivity() {
                 myLockerFragment.onImagesReceived(selectedImagesList)
             }
         }
-
-        if (savedInstanceState == null) {
-            setFragment(initialFragment)
-        }
     }
+
     private fun setFragment(frag: Fragment) {
         supportFragmentManager.commit {
             replace(R.id.frameLayout, frag)
