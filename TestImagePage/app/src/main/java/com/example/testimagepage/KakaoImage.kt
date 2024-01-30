@@ -10,20 +10,19 @@ data class KakaoImage(
     @SerializedName("image_url")
     val imageUrl: String,
     var isFavorite: Boolean,
-    @SerializedName("datetime")
     val datetime: Date
 )
 
-data class MetaData(
+data class Meta(
     @SerializedName("total_count")
     val totalCount: Int?,
+    @SerializedName("pageable_count")
+    val pageableCount: Int?,
     @SerializedName("is_end")
     val isEnd: Boolean?
 )
 
 data class ImageSearchResponse(
-    @SerializedName("meta")
-    val metaData: MetaData?,
-    @SerializedName("documents")
+    val meta: Meta?,
     val documents: MutableList<KakaoImage>?
 )
