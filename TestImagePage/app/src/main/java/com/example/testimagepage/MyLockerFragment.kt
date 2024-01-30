@@ -27,6 +27,11 @@ class MyLockerFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentMyLockerBinding.inflate(inflater, container, false)
+        return binding?.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         recyclerView = binding?.MyLockerRecyclerView ?: RecyclerView(requireContext())
         recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
@@ -46,8 +51,6 @@ class MyLockerFragment : Fragment() {
         }
 
         recyclerView.adapter = myLockerAdapter
-
-        return binding?.root
     }
 
     override fun onDestroyView() {
@@ -57,7 +60,6 @@ class MyLockerFragment : Fragment() {
     }
 
     fun onImagesReceived(images: List<KakaoImage>) {
-
         activity?.runOnUiThread {
             myLockerAdapter.updateData(images)
         }
