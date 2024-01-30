@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.testimagepage.databinding.FragmentMyLockerBinding
@@ -48,6 +49,7 @@ class MyLockerFragment : Fragment() {
         ) ?: emptyList()
 
         myLockerAdapter = MyLockerAdapter(requireContext(), likedImages.toMutableList()) { clickedImage ->
+            showToast("이미지 클릭: ${clickedImage.imageUrl}")
         }
 
         recyclerView.adapter = myLockerAdapter
@@ -60,12 +62,23 @@ class MyLockerFragment : Fragment() {
     }
 
     fun onImagesReceived(images: List<KakaoImage>) {
+        Log.d("MyLockerFragment", "onImagesReceived: ${images.size} 개의 이미지 받음")
+
         activity?.runOnUiThread {
             myLockerAdapter.updateData(images)
+            Log.d("MyLockerFragment", "onImagesReceived: RecyclerView 갱신 완료")
         }
 
-        for (receivedImage in images) {
-            Log.d("MyLockerFragment", "이미지를 받았습니다. URL: ${receivedImage.imageUrl}")
+        if (images.isNotEmpty()) {
+            for (receivedImage in images) {
+                Log.d("MyLockerFragment", "이미지를 받았습니다. URL: ${receivedImage.imageUrl}")
+            }
+        } else {
+            Log.w("MyLockerFragment", "onImagesReceived: 0개 또는 빈 이미지 목록을 받음.")
         }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 }
