@@ -49,7 +49,6 @@ class MyLockerFragment : Fragment() {
         ) ?: emptyList()
 
         myLockerAdapter = MyLockerAdapter(requireContext(), likedImages.toMutableList()) { clickedImage ->
-            showToast("이미지 클릭: ${clickedImage.imageUrl}")
         }
 
         recyclerView.adapter = myLockerAdapter
@@ -76,9 +75,5 @@ class MyLockerFragment : Fragment() {
         } else {
             Log.w("MyLockerFragment", "onImagesReceived: 0개 또는 빈 이미지 목록을 받음.")
         }
-    }
-
-    private fun showToast(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 }
