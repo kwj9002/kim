@@ -36,6 +36,7 @@ class ImageSearchFragment : Fragment() {
 
     private val sharedPreferencesKey = "LIKED_ITEMS"
     private val lastSearchQueryKey = "LAST_SEARCH_QUERY"
+    private val savedSearchDataKey = "SAVED_SEARCH_DATA"
     private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreateView(
@@ -56,6 +57,14 @@ class ImageSearchFragment : Fragment() {
 
         val lastSearchQuery = sharedPreferences.getString(lastSearchQueryKey, "")
         binding?.editText?.setText(lastSearchQuery)
+
+        val savedSearchDataJson = sharedPreferences.getString(savedSearchDataKey, null)
+        val savedSearchData = Gson().fromJson<List<KakaoImage>>(
+            savedSearchDataJson,
+            object : TypeToken<List<KakaoImage>>() {}.type
+        ) ?: emptyList()
+
+        updateRecyclerView(savedSearchData.toMutableList())
 
         binding?.searchButton?.setOnClickListener {
             val query = binding?.editText?.text.toString()
@@ -106,6 +115,9 @@ class ImageSearchFragment : Fragment() {
         }
 
         recyclerView?.adapter = myAdapter
+
+        val itemListJson = Gson().toJson(itemList)
+        sharedPreferences.edit().putString(savedSearchDataKey, itemListJson).apply()
     }
 
     private fun onLikeButtonClicked(clickedKaKaoImage: KakaoImage) {
