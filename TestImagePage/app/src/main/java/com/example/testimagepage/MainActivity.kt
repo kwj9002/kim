@@ -11,7 +11,6 @@ import com.example.testimagepage.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
-    private val selectedImagesList: MutableList<KakaoImage> = mutableListOf()
     private var selectedFragment: Fragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
