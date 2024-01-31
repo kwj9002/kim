@@ -51,9 +51,4 @@ class MainActivity : AppCompatActivity() {
             super.onBackPressed()
         }
     }
-
-    fun onLikedItemsUpdated(likedItems: MutableList<KakaoImage>) {
-        selectedImagesList.clear()
-        selectedImagesList.addAll(likedItems)
-    }
 }
