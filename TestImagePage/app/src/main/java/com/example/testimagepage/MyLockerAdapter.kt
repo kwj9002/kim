@@ -13,14 +13,16 @@ import java.util.Locale
 
 class MyLockerAdapter(
     private val context: Context,
-    private var itemList: MutableList<KakaoImage>,
-    private val onImageClickListener: (KakaoImage) -> Unit
+    private var images: MutableList<KakaoImage>,
+    private val onImageClickListener: (KakaoImage) -> Unit,
+    private val onDeleteClickListener: (KakaoImage) -> Unit
 ) : RecyclerView.Adapter<MyLockerAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val imageView: ImageView = view.findViewById(R.id.imageview)
         val textSiteName: TextView = view.findViewById(R.id.display_sitename)
         val textTime: TextView = view.findViewById(R.id.datetime)
+        val deleteButton: ImageView = view.findViewById(R.id.favoriteButton)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -29,9 +31,9 @@ class MyLockerAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val kakaoImage = itemList[position]
+        val kakaoImage = images[position]
 
-        loadImageFromUrl(kakaoImage.imageUrl, holder.imageView)
+        Picasso.get().load(kakaoImage.imageUrl).into(holder.imageView)
 
         holder.textSiteName.text = kakaoImage.siteName
 
@@ -42,19 +44,30 @@ class MyLockerAdapter(
         holder.itemView.setOnClickListener {
             onImageClickListener.invoke(kakaoImage)
         }
+
+        holder.deleteButton.setOnClickListener {
+            onDeleteClickListener.invoke(kakaoImage)
+        }
     }
 
     override fun getItemCount(): Int {
-        return itemList.size
+        return images.size
     }
 
-    fun updateData(images: List<KakaoImage>) {
-        itemList.clear()
-        itemList.addAll(images)
+    fun updateData(newLikedImages: List<KakaoImage>) {
+        images = newLikedImages.toMutableList()
         notifyDataSetChanged()
     }
 
-    private fun loadImageFromUrl(url: String, imageView: ImageView) {
-        Picasso.get().load(url).into(imageView)
+    fun removeImage(deletedImage: KakaoImage) {
+        val index = images.indexOf(deletedImage)
+        if (index != -1) {
+            images.removeAt(index)
+            notifyItemRemoved(index)
+        }
+    }
+
+    fun getImages(): List<KakaoImage> {
+        return images.toList()
     }
 }

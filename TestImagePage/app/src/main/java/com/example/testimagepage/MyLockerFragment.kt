@@ -21,7 +21,7 @@ class MyLockerFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var myLockerAdapter: MyLockerAdapter
     private lateinit var sharedPreferences: SharedPreferences
-    private val sharedPreferencesKey = "LIKED_IMAGES"
+    private val sharedPreferencesKey = "LIKED_ITEMS"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,7 +34,7 @@ class MyLockerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        recyclerView = binding?.MyLockerRecyclerView ?: RecyclerView(requireContext())
+        recyclerView = binding?.myLockerRecyclerView ?: RecyclerView(requireContext())
         recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
 
         sharedPreferences = requireContext().getSharedPreferences(
@@ -48,32 +48,34 @@ class MyLockerFragment : Fragment() {
             object : TypeToken<List<KakaoImage>>() {}.type
         ) ?: emptyList()
 
-        myLockerAdapter = MyLockerAdapter(requireContext(), likedImages.toMutableList()) { clickedImage ->
-        }
+        myLockerAdapter = MyLockerAdapter(
+            requireContext(),
+            likedImages.toMutableList(),
+            onImageClickListener = { clickedImage ->
+            },
+            onDeleteClickListener = { deletedImage ->
+                onImageDeleted(deletedImage)
+            }
+        )
 
         recyclerView.adapter = myLockerAdapter
+    }
+
+    private fun onImageDeleted(deletedImage: KakaoImage) {
+        myLockerAdapter.removeImage(deletedImage)
+
+        val updatedLikedItemsJson = Gson().toJson(myLockerAdapter.getImages())
+        sharedPreferences.edit().putString(sharedPreferencesKey, updatedLikedItemsJson).apply()
+    }
+
+    private fun saveLikedImages(updatedLikedImages: List<KakaoImage>) {
+        val likedImagesJson = Gson().toJson(updatedLikedImages)
+        sharedPreferences.edit().putString(sharedPreferencesKey, likedImagesJson).apply()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
         recyclerView.adapter = null
-    }
-
-    fun onImagesReceived(images: List<KakaoImage>) {
-        Log.d("MyLockerFragment", "onImagesReceived: ${images.size} 개의 이미지 받음")
-
-        activity?.runOnUiThread {
-            myLockerAdapter.updateData(images)
-            Log.d("MyLockerFragment", "onImagesReceived: RecyclerView 갱신 완료")
-        }
-
-        if (images.isNotEmpty()) {
-            for (receivedImage in images) {
-                Log.d("MyLockerFragment", "이미지를 받았습니다. URL: ${receivedImage.imageUrl}")
-            }
-        } else {
-            Log.w("MyLockerFragment", "onImagesReceived: 0개 또는 빈 이미지 목록을 받음.")
-        }
     }
 }
