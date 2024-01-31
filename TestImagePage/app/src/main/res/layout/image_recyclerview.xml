@@ -36,7 +36,7 @@
         android:id="@+id/favoriteButton"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:src="@drawable/ic_favorite_filled"
+        android:src="@drawable/ic_favorite"
         android:background="@android:color/transparent"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"

@@ -28,8 +28,6 @@ class MainActivity : AppCompatActivity() {
             fragment2Btn.setOnClickListener {
                 val myLockerFragment = MyLockerFragment()
                 setFragment(myLockerFragment)
-
-                myLockerFragment.onImagesReceived(selectedImagesList)
             }
         }
     }
@@ -54,13 +52,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun onImageSelected(selectedImages: List<KakaoImage>) {
+    fun onLikedItemsUpdated(likedItems: MutableList<KakaoImage>) {
         selectedImagesList.clear()
-        selectedImagesList.addAll(selectedImages)
-
-        val myLockerFragment = supportFragmentManager.findFragmentByTag(MyLockerFragment::class.java.simpleName) as? MyLockerFragment
-        myLockerFragment?.onImagesReceived(selectedImagesList)
-
-        Log.d("MainActivity", "전송된 이미지 수: ${selectedImagesList.size}")
+        selectedImagesList.addAll(likedItems)
     }
 }

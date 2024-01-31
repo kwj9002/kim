@@ -110,9 +110,10 @@ class ImageSearchFragment : Fragment() {
         val recyclerView: RecyclerView? = binding?.imageSearchRecyclerView
         recyclerView?.layoutManager = GridLayoutManager(requireContext(), 2)
 
-        val imageSearchAdapter = ImageSearchAdapter(requireContext(), itemList) { clickedKakaoImage ->
-            onLikeButtonClicked(clickedKakaoImage)
-        }
+        val imageSearchAdapter =
+            ImageSearchAdapter(requireContext(), itemList) { clickedKakaoImage ->
+                onLikeButtonClicked(clickedKakaoImage)
+            }
 
         recyclerView?.adapter = imageSearchAdapter
 
@@ -139,10 +140,13 @@ class ImageSearchFragment : Fragment() {
         val likedItemsJsonUpdated = Gson().toJson(likedItems)
         sharedPreferences.edit().putString(sharedPreferencesKey, likedItemsJsonUpdated).apply()
 
-        (requireActivity() as? MainActivity)?.onImageSelected(likedItems.filter { it.isFavorite })
+        val imageSearchAdapter = binding?.imageSearchRecyclerView?.adapter as? ImageSearchAdapter
+        imageSearchAdapter?.notifyDataSetChanged()
+
+        (requireActivity() as? MainActivity)?.onLikedItemsUpdated(likedItems)
 
         for (likedItem in likedItems.filter { it.isFavorite }) {
-            println("ImageSearchFragment: 좋아요 누른 이미지 URL: ${likedItem.imageUrl}")
+            println("ImageSearchFragment: Liked Image URL: ${likedItem.imageUrl}")
         }
     }
 }

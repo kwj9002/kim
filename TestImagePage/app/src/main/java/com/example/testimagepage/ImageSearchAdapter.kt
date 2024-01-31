@@ -51,9 +51,7 @@ class ImageSearchAdapter(
     }
 
     private fun updateFavoriteImage(imageView: ImageView, isFavorite: Boolean) {
-        imageView.post {
-            imageView.setImageResource(if (isFavorite) R.drawable.ic_favorite else R.drawable.ic_favorite_filled)
-        }
+        imageView.setImageResource(if (isFavorite) R.drawable.ic_favorite else R.drawable.ic_favorite_filled)
     }
 
     override fun getItemCount(): Int {
