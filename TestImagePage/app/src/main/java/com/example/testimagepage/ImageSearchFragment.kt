@@ -118,35 +118,30 @@ class ImageSearchFragment : Fragment() {
 
         val imageSearchAdapter =
             ImageSearchAdapter(requireContext(), itemList) { clickedKakaoImage ->
-                onLikeButtonClicked(clickedKakaoImage)
+                onImageClicked(clickedKakaoImage)
             }
 
         recyclerView?.adapter = imageSearchAdapter
-
-        saveSearchData(itemList)
     }
 
-    private fun saveSearchData(itemList: List<KakaoImage>) {
-        val itemListJson = Gson().toJson(itemList)
-        sharedPreferences.edit().putString(savedSearchDataKey, itemListJson).apply()
-    }
-
-    private fun onLikeButtonClicked(clickedKaKaoImage: KakaoImage) {
+    private fun onImageClicked(clickedKaKaoImage: KakaoImage) {
         val likedItems = getLikedItems()
 
         val existingLikedItem = likedItems.find { it.imageUrl == clickedKaKaoImage.imageUrl }
 
         if (existingLikedItem != null) {
+            showToast("좋아요 취소")
+
             likedItems.remove(existingLikedItem)
             deleteLikedItem(existingLikedItem)
-            showToast("좋아요 취소")
         } else {
+            showToast("좋아요 추가")
+
             clickedKaKaoImage.isFavorite = true
             likedItems.add(clickedKaKaoImage)
-            saveLikedItems(likedItems)
-            showToast("좋아요 추가")
         }
 
+        saveLikedItems(likedItems)
         notifyImageSearchAdapter()
     }
 

@@ -14,7 +14,7 @@ import java.util.Locale
 class ImageSearchAdapter(
     private val context: Context,
     private var itemList: MutableList<KakaoImage>,
-    private val onLikeClickListener: (KakaoImage) -> Unit
+    private val onImageClickListener: (KakaoImage) -> Unit
 ) : RecyclerView.Adapter<ImageSearchAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -40,23 +40,12 @@ class ImageSearchAdapter(
         val date = dateFormat.format(kakaoImage.datetime)
         holder.textTime.text = date
 
-        updateFavoriteImage(holder.favoriteImageView, kakaoImage.isFavorite)
+        holder.favoriteImageView.visibility = if (kakaoImage.isFavorite) View.VISIBLE else View.GONE
 
         holder.imageView.setOnClickListener {
-            onLikeClickListener.invoke(kakaoImage)
-            updateFavoriteImage(holder.favoriteImageView, kakaoImage.isFavorite)
+            onImageClickListener.invoke(kakaoImage)
+            holder.favoriteImageView.visibility = if (kakaoImage.isFavorite) View.VISIBLE else View.GONE
         }
-
-        holder.favoriteImageView.setOnClickListener {
-            kakaoImage.isFavorite = !kakaoImage.isFavorite
-            onLikeClickListener.invoke(kakaoImage)
-
-            updateFavoriteImage(holder.favoriteImageView, kakaoImage.isFavorite)
-        }
-    }
-
-    private fun updateFavoriteImage(imageView: ImageView, isFavorite: Boolean) {
-        imageView.setImageResource(if (isFavorite) R.drawable.ic_favorite else 0)
     }
 
     override fun getItemCount(): Int {
