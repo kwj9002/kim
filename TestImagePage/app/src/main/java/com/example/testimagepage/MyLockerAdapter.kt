@@ -14,14 +14,13 @@ import java.util.Locale
 class MyLockerAdapter(
     private val context: Context,
     private var images: MutableList<KakaoImage>,
-    private val onDeleteClickListener: (KakaoImage) -> Unit
+    private val onItemClickListener: (KakaoImage) -> Unit
 ) : RecyclerView.Adapter<MyLockerAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val imageView: ImageView = view.findViewById(R.id.imageview)
         val textSiteName: TextView = view.findViewById(R.id.display_sitename)
         val textTime: TextView = view.findViewById(R.id.datetime)
-        val deleteButton: ImageView = view.findViewById(R.id.favoriteButton)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -40,8 +39,8 @@ class MyLockerAdapter(
         val date = dateFormat.format(kakaoImage.datetime)
         holder.textTime.text = date
 
-        holder.deleteButton.setOnClickListener {
-            onDeleteClickListener.invoke(kakaoImage)
+        holder.itemView.setOnClickListener {
+            onItemClickListener.invoke(kakaoImage)
         }
     }
 
