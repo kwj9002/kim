@@ -120,6 +120,13 @@ class ImageSearchFragment : Fragment() {
             object : TypeToken<List<KakaoImage>>() {}.type
         ) ?: emptyList()
 
+        val likedItems = getLikedItems()
+
+        savedSearchData.forEach { image ->
+            val existingLikedItem = likedItems.find { it.imageUrl == image.imageUrl }
+            image.isFavorite = existingLikedItem != null
+        }
+
         updateRecyclerView(savedSearchData.toMutableList())
     }
 
@@ -128,7 +135,12 @@ class ImageSearchFragment : Fragment() {
         recyclerView?.layoutManager = GridLayoutManager(requireContext(), 2)
 
         val imageSearchAdapter =
-            ImageSearchAdapter(requireContext(), itemList, this::onImageClicked)
+            ImageSearchAdapter(
+                requireContext(),
+                itemList,
+                getLikedItems(),
+                this::onImageClicked
+            )
 
         recyclerView?.adapter = imageSearchAdapter
     }
@@ -143,6 +155,14 @@ class ImageSearchFragment : Fragment() {
 
             likedItems.remove(existingLikedItem)
             deleteLikedItem(existingLikedItem)
+
+            val imageSearchAdapter = binding?.imageSearchRecyclerView?.adapter as? ImageSearchAdapter
+            val position = imageSearchAdapter?.itemList?.indexOfFirst { it.imageUrl == clickedKaKaoImage.imageUrl }
+
+            position?.let {
+                imageSearchAdapter.itemList[it] = clickedKaKaoImage.copy(isFavorite = false)
+                imageSearchAdapter.notifyItemChanged(it)
+            }
         } else {
             showToast("좋아요 추가")
 
@@ -151,19 +171,6 @@ class ImageSearchFragment : Fragment() {
         }
 
         saveLikedItems(likedItems)
-        notifyImageSearchAdapter(clickedKaKaoImage)
-    }
-
-    private fun notifyImageSearchAdapter(clickedKaKaoImage: KakaoImage) {
-        val imageSearchAdapter = binding?.imageSearchRecyclerView?.adapter as? ImageSearchAdapter
-
-        val position = imageSearchAdapter?.itemList?.indexOfFirst { it.imageUrl == clickedKaKaoImage.imageUrl }
-
-        position?.let {
-            imageSearchAdapter.itemList[it] = clickedKaKaoImage
-
-            imageSearchAdapter.notifyItemChanged(it)
-        }
     }
 
     private fun getLikedItems(): MutableList<KakaoImage> {
@@ -181,11 +188,14 @@ class ImageSearchFragment : Fragment() {
         val likedItems = getLikedItems()
         likedItems.removeAll { it.imageUrl == deletedKaKaoImage.imageUrl }
         saveLikedItems(likedItems)
-        notifyImageSearchAdapter()
-    }
 
-    private fun notifyImageSearchAdapter() {
         val imageSearchAdapter = binding?.imageSearchRecyclerView?.adapter as? ImageSearchAdapter
+        val position = imageSearchAdapter?.itemList?.indexOfFirst { it.imageUrl == deletedKaKaoImage.imageUrl }
+
+        position?.let {
+            imageSearchAdapter.itemList[it] = deletedKaKaoImage.copy(isFavorite = false)
+            imageSearchAdapter.notifyItemChanged(it)
+        }
         imageSearchAdapter?.notifyDataSetChanged()
     }
 
