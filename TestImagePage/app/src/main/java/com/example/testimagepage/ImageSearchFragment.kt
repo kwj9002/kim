@@ -40,6 +40,8 @@ class ImageSearchFragment : Fragment() {
     private val savedSearchDataKey = "SAVED_SEARCH_DATA"
     private lateinit var sharedPreferences: SharedPreferences
 
+    private var isFragmentRecreated = false
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -56,16 +58,17 @@ class ImageSearchFragment : Fragment() {
             Context.MODE_PRIVATE
         )
 
-        val lastSearchQuery = sharedPreferences.getString(lastSearchQueryKey, "")
-        binding?.editText?.setText(lastSearchQuery)
+        if (!isFragmentRecreated) {
+            val savedSearchDataJson = sharedPreferences.getString(savedSearchDataKey, null)
+            val savedSearchData = Gson().fromJson<List<KakaoImage>>(
+                savedSearchDataJson,
+                object : TypeToken<List<KakaoImage>>() {}.type
+            ) ?: emptyList()
 
-        val savedSearchDataJson = sharedPreferences.getString(savedSearchDataKey, null)
-        val savedSearchData = Gson().fromJson<List<KakaoImage>>(
-            savedSearchDataJson,
-            object : TypeToken<List<KakaoImage>>() {}.type
-        ) ?: emptyList()
+            updateRecyclerView(savedSearchData.toMutableList())
 
-        updateRecyclerView(savedSearchData.toMutableList())
+            isFragmentRecreated = true
+        }
 
         binding?.searchButton?.setOnClickListener {
             val query = binding?.editText?.text.toString()
@@ -144,8 +147,6 @@ class ImageSearchFragment : Fragment() {
 
         val imageSearchAdapter = binding?.imageSearchRecyclerView?.adapter as? ImageSearchAdapter
         imageSearchAdapter?.notifyDataSetChanged()
-
-        (requireActivity() as? MainActivity)?.onLikedItemsUpdated(likedItems)
     }
 
     private fun saveLikedItems(likedItems: List<KakaoImage>) {
@@ -167,8 +168,6 @@ class ImageSearchFragment : Fragment() {
 
         val imageSearchAdapter = binding?.imageSearchRecyclerView?.adapter as? ImageSearchAdapter
         imageSearchAdapter?.notifyDataSetChanged()
-
-        (requireActivity() as? MainActivity)?.onLikedItemsUpdated(likedItems)
     }
 
     private fun showToast(message: String) {
