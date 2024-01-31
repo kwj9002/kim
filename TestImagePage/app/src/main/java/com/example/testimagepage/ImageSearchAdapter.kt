@@ -42,6 +42,11 @@ class ImageSearchAdapter(
 
         updateFavoriteImage(holder.favoriteImageView, kakaoImage.isFavorite)
 
+        holder.imageView.setOnClickListener {
+            onLikeClickListener.invoke(kakaoImage)
+            updateFavoriteImage(holder.favoriteImageView, kakaoImage.isFavorite)
+        }
+
         holder.favoriteImageView.setOnClickListener {
             kakaoImage.isFavorite = !kakaoImage.isFavorite
             onLikeClickListener.invoke(kakaoImage)
@@ -51,7 +56,7 @@ class ImageSearchAdapter(
     }
 
     private fun updateFavoriteImage(imageView: ImageView, isFavorite: Boolean) {
-        imageView.setImageResource(if (isFavorite) R.drawable.ic_favorite else R.drawable.ic_favorite_filled)
+        imageView.setImageResource(if (isFavorite) R.drawable.ic_favorite else 0)
     }
 
     override fun getItemCount(): Int {
