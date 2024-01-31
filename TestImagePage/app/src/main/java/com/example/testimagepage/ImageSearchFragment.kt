@@ -59,6 +59,9 @@ class ImageSearchFragment : Fragment() {
         )
 
         if (!isFragmentRecreated) {
+            val lastSearchQuery = sharedPreferences.getString(lastSearchQueryKey, "")
+            binding?.editText?.setText(lastSearchQuery)
+
             restoreSavedSearchData()
             isFragmentRecreated = true
         }
@@ -75,16 +78,6 @@ class ImageSearchFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    private fun restoreSavedSearchData() {
-        val savedSearchDataJson = sharedPreferences.getString(savedSearchDataKey, null)
-        val savedSearchData = Gson().fromJson<List<KakaoImage>>(
-            savedSearchDataJson,
-            object : TypeToken<List<KakaoImage>>() {}.type
-        ) ?: emptyList()
-
-        updateRecyclerView(savedSearchData.toMutableList())
     }
 
     private fun fetchData(query: String) {
@@ -105,11 +98,28 @@ class ImageSearchFragment : Fragment() {
                     if (response.isSuccessful) {
                         val itemList = response.body()?.documents?.map { it.copy() } ?: emptyList()
                         updateRecyclerView(itemList.toMutableList())
+
+                        saveLastSearchData(itemList)
                     }
                 }
             } catch (_: Exception) {
             }
         }
+    }
+
+    private fun saveLastSearchData(searchData: List<KakaoImage>) {
+        val savedSearchDataJson = Gson().toJson(searchData)
+        sharedPreferences.edit().putString(savedSearchDataKey, savedSearchDataJson).apply()
+    }
+
+    private fun restoreSavedSearchData() {
+        val savedSearchDataJson = sharedPreferences.getString(savedSearchDataKey, null)
+        val savedSearchData = Gson().fromJson<List<KakaoImage>>(
+            savedSearchDataJson,
+            object : TypeToken<List<KakaoImage>>() {}.type
+        ) ?: emptyList()
+
+        updateRecyclerView(savedSearchData.toMutableList())
     }
 
     private fun updateRecyclerView(itemList: MutableList<KakaoImage>) {
