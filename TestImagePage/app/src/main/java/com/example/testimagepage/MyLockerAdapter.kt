@@ -54,11 +54,6 @@ class MyLockerAdapter(
         return images.size
     }
 
-    fun updateData(newLikedImages: List<KakaoImage>) {
-        images = newLikedImages.toMutableList()
-        notifyDataSetChanged()
-    }
-
     fun removeImage(deletedImage: KakaoImage) {
         val index = images.indexOf(deletedImage)
         if (index != -1) {
