@@ -12,6 +12,7 @@ class MainActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private val selectedImagesList: MutableList<KakaoImage> = mutableListOf()
+    private var selectedFragment: Fragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,22 +20,40 @@ class MainActivity : AppCompatActivity() {
 
         if (savedInstanceState == null) {
             setFragment(ImageSearchFragment())
+        } else {
+            selectedFragment =
+                supportFragmentManager.findFragmentById(R.id.frameLayout)
         }
 
         binding.apply {
             fragment1Btn.setOnClickListener {
-                setFragment(ImageSearchFragment())
+                selectedFragment = ImageSearchFragment()
+                setFragment(selectedFragment!!)
             }
             fragment2Btn.setOnClickListener {
-                val myLockerFragment = MyLockerFragment()
-                setFragment(myLockerFragment)
+                selectedFragment = MyLockerFragment()
+                setFragment(selectedFragment!!)
             }
         }
     }
 
-    private fun setFragment(frag: Fragment) {
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        selectedFragment?.let {
+            outState.putString("SELECTED_FRAGMENT_TAG", it::class.java.simpleName)
+        }
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        val selectedFragmentTag = savedInstanceState.getString("SELECTED_FRAGMENT_TAG")
+        selectedFragment =
+            supportFragmentManager.findFragmentByTag(selectedFragmentTag) ?: selectedFragment
+    }
+
+    private fun setFragment(fragment: Fragment) {
         supportFragmentManager.commit {
-            replace(R.id.frameLayout, frag)
+            replace(R.id.frameLayout, fragment, fragment::class.java.simpleName)
             setReorderingAllowed(true)
             addToBackStack(null)
         }

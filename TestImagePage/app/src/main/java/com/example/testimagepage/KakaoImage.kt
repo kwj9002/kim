@@ -9,7 +9,7 @@ data class KakaoImage(
     val collection: String,
     @SerializedName("image_url")
     val imageUrl: String,
-    var isFavorite: Boolean,
+    var isFavorite: Boolean = false,
     val datetime: Date
 )
 

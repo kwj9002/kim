@@ -3,15 +3,14 @@ package com.example.testimagepage
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.testimagepage.databinding.FragmentImageSearchBinding
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
@@ -20,9 +19,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import com.example.testimagepage.databinding.FragmentImageSearchBinding
 
 class ImageSearchFragment : Fragment() {
-
     private var _binding: FragmentImageSearchBinding? = null
     private val binding get() = _binding
     private val kaKaoApiKey = "KakaoAK 21e1f67c048db5e84dd85fe16df60f61"
@@ -39,7 +38,6 @@ class ImageSearchFragment : Fragment() {
     private val lastSearchQueryKey = "LAST_SEARCH_QUERY"
     private val savedSearchDataKey = "SAVED_SEARCH_DATA"
     private lateinit var sharedPreferences: SharedPreferences
-
     private var isFragmentRecreated = false
 
     override fun onCreateView(
@@ -64,6 +62,8 @@ class ImageSearchFragment : Fragment() {
 
             restoreSavedSearchData()
             isFragmentRecreated = true
+        } else {
+            updateFavoriteStatus()
         }
 
         binding?.searchButton?.setOnClickListener {
@@ -103,6 +103,7 @@ class ImageSearchFragment : Fragment() {
                     }
                 }
             } catch (_: Exception) {
+
             }
         }
     }
@@ -127,9 +128,7 @@ class ImageSearchFragment : Fragment() {
         recyclerView?.layoutManager = GridLayoutManager(requireContext(), 2)
 
         val imageSearchAdapter =
-            ImageSearchAdapter(requireContext(), itemList) { clickedKakaoImage ->
-                onImageClicked(clickedKakaoImage)
-            }
+            ImageSearchAdapter(requireContext(), itemList, this::onImageClicked)
 
         recyclerView?.adapter = imageSearchAdapter
     }
@@ -152,7 +151,19 @@ class ImageSearchFragment : Fragment() {
         }
 
         saveLikedItems(likedItems)
-        notifyImageSearchAdapter()
+        notifyImageSearchAdapter(clickedKaKaoImage)
+    }
+
+    private fun notifyImageSearchAdapter(clickedKaKaoImage: KakaoImage) {
+        val imageSearchAdapter = binding?.imageSearchRecyclerView?.adapter as? ImageSearchAdapter
+
+        val position = imageSearchAdapter?.itemList?.indexOfFirst { it.imageUrl == clickedKaKaoImage.imageUrl }
+
+        position?.let {
+            imageSearchAdapter.itemList[it] = clickedKaKaoImage
+
+            imageSearchAdapter.notifyItemChanged(it)
+        }
     }
 
     private fun getLikedItems(): MutableList<KakaoImage> {
@@ -180,5 +191,17 @@ class ImageSearchFragment : Fragment() {
 
     private fun showToast(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun updateFavoriteStatus() {
+        val likedItems = getLikedItems()
+        val imageSearchAdapter = binding?.imageSearchRecyclerView?.adapter as? ImageSearchAdapter
+
+        imageSearchAdapter?.itemList?.forEach { image ->
+            val existingLikedItem = likedItems.find { it.imageUrl == image.imageUrl }
+            image.isFavorite = existingLikedItem != null
+        }
+
+        imageSearchAdapter?.notifyDataSetChanged()
     }
 }

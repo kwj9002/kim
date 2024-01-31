@@ -13,7 +13,7 @@ import java.util.Locale
 
 class ImageSearchAdapter(
     private val context: Context,
-    private var itemList: MutableList<KakaoImage>,
+    var itemList: MutableList<KakaoImage>,
     private val onImageClickListener: (KakaoImage) -> Unit
 ) : RecyclerView.Adapter<ImageSearchAdapter.ViewHolder>() {
 
@@ -40,11 +40,20 @@ class ImageSearchAdapter(
         val date = dateFormat.format(kakaoImage.datetime)
         holder.textTime.text = date
 
-        holder.favoriteImageView.visibility = if (kakaoImage.isFavorite) View.VISIBLE else View.GONE
+        holder.favoriteImageView.visibility =
+            if (kakaoImage.isFavorite) View.VISIBLE else View.GONE
 
         holder.imageView.setOnClickListener {
+            kakaoImage.isFavorite = !kakaoImage.isFavorite
+
+            holder.favoriteImageView.visibility =
+                if (kakaoImage.isFavorite) View.VISIBLE else View.GONE
+
+            itemList[position] = kakaoImage
+
+            notifyItemChanged(position)
+
             onImageClickListener.invoke(kakaoImage)
-            holder.favoriteImageView.visibility = if (kakaoImage.isFavorite) View.VISIBLE else View.GONE
         }
     }
 
