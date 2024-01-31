@@ -14,7 +14,6 @@ import java.util.Locale
 class MyLockerAdapter(
     private val context: Context,
     private var images: MutableList<KakaoImage>,
-    private val onImageClickListener: (KakaoImage) -> Unit,
     private val onDeleteClickListener: (KakaoImage) -> Unit
 ) : RecyclerView.Adapter<MyLockerAdapter.ViewHolder>() {
 
@@ -40,10 +39,6 @@ class MyLockerAdapter(
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         val date = dateFormat.format(kakaoImage.datetime)
         holder.textTime.text = date
-
-        holder.itemView.setOnClickListener {
-            onImageClickListener.invoke(kakaoImage)
-        }
 
         holder.deleteButton.setOnClickListener {
             onDeleteClickListener.invoke(kakaoImage)
