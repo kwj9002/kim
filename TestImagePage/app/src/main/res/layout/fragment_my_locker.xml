@@ -7,7 +7,7 @@
     tools:context=".MyLockerFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/My_Locker_RecyclerView"
+        android:id="@+id/my_Locker_RecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
