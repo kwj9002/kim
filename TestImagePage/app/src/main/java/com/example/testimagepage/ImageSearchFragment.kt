@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.testimagepage.databinding.FragmentImageSearchBinding
@@ -131,11 +132,35 @@ class ImageSearchFragment : Fragment() {
         val existingLikedItem = likedItems.find { it.imageUrl == clickedKaKaoImage.imageUrl }
 
         if (existingLikedItem != null) {
-            existingLikedItem.isFavorite = !existingLikedItem.isFavorite
+            likedItems.remove(existingLikedItem)
+            deleteLikedItem(existingLikedItem)
+            showToast("좋아요 취소")
         } else {
             clickedKaKaoImage.isFavorite = true
             likedItems.add(clickedKaKaoImage)
+            saveLikedItems(likedItems)
+            showToast("좋아요 추가")
         }
+
+        val imageSearchAdapter = binding?.imageSearchRecyclerView?.adapter as? ImageSearchAdapter
+        imageSearchAdapter?.notifyDataSetChanged()
+
+        (requireActivity() as? MainActivity)?.onLikedItemsUpdated(likedItems)
+    }
+
+    private fun saveLikedItems(likedItems: List<KakaoImage>) {
+        val likedItemsJson = Gson().toJson(likedItems)
+        sharedPreferences.edit().putString(sharedPreferencesKey, likedItemsJson).apply()
+    }
+
+    private fun deleteLikedItem(deletedKaKaoImage: KakaoImage) {
+        val likedItemsJson = sharedPreferences.getString(sharedPreferencesKey, null)
+        val likedItems = Gson().fromJson<List<KakaoImage>>(
+            likedItemsJson,
+            object : TypeToken<List<KakaoImage>>() {}.type
+        )?.toMutableList() ?: mutableListOf()
+
+        likedItems.removeAll { it.imageUrl == deletedKaKaoImage.imageUrl }
 
         val likedItemsJsonUpdated = Gson().toJson(likedItems)
         sharedPreferences.edit().putString(sharedPreferencesKey, likedItemsJsonUpdated).apply()
@@ -144,9 +169,9 @@ class ImageSearchFragment : Fragment() {
         imageSearchAdapter?.notifyDataSetChanged()
 
         (requireActivity() as? MainActivity)?.onLikedItemsUpdated(likedItems)
+    }
 
-        for (likedItem in likedItems.filter { it.isFavorite }) {
-            println("ImageSearchFragment: Liked Image URL: ${likedItem.imageUrl}")
-        }
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 }
