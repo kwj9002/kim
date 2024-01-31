@@ -51,14 +51,10 @@ class MyLockerFragment : Fragment() {
         myLockerAdapter = MyLockerAdapter(
             requireContext(),
             likedImages.toMutableList(),
-            onImageClickListener = { clickedImage ->
-                // 이미지 클릭 시의 동작 추가
-            },
             onDeleteClickListener = { deletedImage ->
                 showDeleteDialog(deletedImage)
             }
         )
-
         recyclerView.adapter = myLockerAdapter
     }
 
