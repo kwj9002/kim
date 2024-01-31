@@ -59,14 +59,7 @@ class ImageSearchFragment : Fragment() {
         )
 
         if (!isFragmentRecreated) {
-            val savedSearchDataJson = sharedPreferences.getString(savedSearchDataKey, null)
-            val savedSearchData = Gson().fromJson<List<KakaoImage>>(
-                savedSearchDataJson,
-                object : TypeToken<List<KakaoImage>>() {}.type
-            ) ?: emptyList()
-
-            updateRecyclerView(savedSearchData.toMutableList())
-
+            restoreSavedSearchData()
             isFragmentRecreated = true
         }
 
@@ -74,7 +67,6 @@ class ImageSearchFragment : Fragment() {
             val query = binding?.editText?.text.toString()
             if (query.isNotEmpty()) {
                 fetchData(query)
-
                 sharedPreferences.edit().putString(lastSearchQueryKey, query).apply()
             }
         }
@@ -83,6 +75,16 @@ class ImageSearchFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun restoreSavedSearchData() {
+        val savedSearchDataJson = sharedPreferences.getString(savedSearchDataKey, null)
+        val savedSearchData = Gson().fromJson<List<KakaoImage>>(
+            savedSearchDataJson,
+            object : TypeToken<List<KakaoImage>>() {}.type
+        ) ?: emptyList()
+
+        updateRecyclerView(savedSearchData.toMutableList())
     }
 
     private fun fetchData(query: String) {
@@ -121,16 +123,16 @@ class ImageSearchFragment : Fragment() {
 
         recyclerView?.adapter = imageSearchAdapter
 
+        saveSearchData(itemList)
+    }
+
+    private fun saveSearchData(itemList: List<KakaoImage>) {
         val itemListJson = Gson().toJson(itemList)
         sharedPreferences.edit().putString(savedSearchDataKey, itemListJson).apply()
     }
 
     private fun onLikeButtonClicked(clickedKaKaoImage: KakaoImage) {
-        val likedItemsJson = sharedPreferences.getString(sharedPreferencesKey, null)
-        val likedItems = Gson().fromJson<List<KakaoImage>>(
-            likedItemsJson,
-            object : TypeToken<List<KakaoImage>>() {}.type
-        )?.toMutableList() ?: mutableListOf()
+        val likedItems = getLikedItems()
 
         val existingLikedItem = likedItems.find { it.imageUrl == clickedKaKaoImage.imageUrl }
 
@@ -145,8 +147,13 @@ class ImageSearchFragment : Fragment() {
             showToast("좋아요 추가")
         }
 
-        val imageSearchAdapter = binding?.imageSearchRecyclerView?.adapter as? ImageSearchAdapter
-        imageSearchAdapter?.notifyDataSetChanged()
+        notifyImageSearchAdapter()
+    }
+
+    private fun getLikedItems(): MutableList<KakaoImage> {
+        val likedItemsJson = sharedPreferences.getString(sharedPreferencesKey, null)
+        val type = object : TypeToken<List<KakaoImage>>() {}.type
+        return Gson().fromJson(likedItemsJson, type) ?: mutableListOf()
     }
 
     private fun saveLikedItems(likedItems: List<KakaoImage>) {
@@ -155,17 +162,13 @@ class ImageSearchFragment : Fragment() {
     }
 
     private fun deleteLikedItem(deletedKaKaoImage: KakaoImage) {
-        val likedItemsJson = sharedPreferences.getString(sharedPreferencesKey, null)
-        val likedItems = Gson().fromJson<List<KakaoImage>>(
-            likedItemsJson,
-            object : TypeToken<List<KakaoImage>>() {}.type
-        )?.toMutableList() ?: mutableListOf()
-
+        val likedItems = getLikedItems()
         likedItems.removeAll { it.imageUrl == deletedKaKaoImage.imageUrl }
+        saveLikedItems(likedItems)
+        notifyImageSearchAdapter()
+    }
 
-        val likedItemsJsonUpdated = Gson().toJson(likedItems)
-        sharedPreferences.edit().putString(sharedPreferencesKey, likedItemsJsonUpdated).apply()
-
+    private fun notifyImageSearchAdapter() {
         val imageSearchAdapter = binding?.imageSearchRecyclerView?.adapter as? ImageSearchAdapter
         imageSearchAdapter?.notifyDataSetChanged()
     }
