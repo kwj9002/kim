@@ -10,10 +10,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.Locale
+import kotlin.reflect.KFunction1
 
 class ImageSearchAdapter(
     private val context: Context,
-    var itemList: MutableList<KakaoImage>,
+    val itemList: MutableList<KakaoImage>,
+    private val likedItems: MutableList<KakaoImage>,
     private val onImageClickListener: (KakaoImage) -> Unit
 ) : RecyclerView.Adapter<ImageSearchAdapter.ViewHolder>() {
 
@@ -40,16 +42,20 @@ class ImageSearchAdapter(
         val date = dateFormat.format(kakaoImage.datetime)
         holder.textTime.text = date
 
-        holder.favoriteImageView.visibility =
-            if (kakaoImage.isFavorite) View.VISIBLE else View.GONE
+        val isLiked = likedItems.any { it.imageUrl == kakaoImage.imageUrl }
+        holder.favoriteImageView.visibility = if (isLiked) View.VISIBLE else View.GONE
 
         holder.imageView.setOnClickListener {
-            kakaoImage.isFavorite = !kakaoImage.isFavorite
+            kakaoImage.isFavorite = !isLiked
+
+            if (kakaoImage.isFavorite) {
+                likedItems.add(kakaoImage)
+            } else {
+                likedItems.remove(kakaoImage)
+            }
 
             holder.favoriteImageView.visibility =
                 if (kakaoImage.isFavorite) View.VISIBLE else View.GONE
-
-            itemList[position] = kakaoImage
 
             notifyItemChanged(position)
 

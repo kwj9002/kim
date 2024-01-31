@@ -3,9 +3,7 @@ package com.example.testimagepage
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.commit
 import com.example.testimagepage.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -20,18 +18,17 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             setFragment(ImageSearchFragment())
         } else {
-            selectedFragment =
-                supportFragmentManager.findFragmentById(R.id.frameLayout)
+            selectedFragment = supportFragmentManager.findFragmentById(R.id.frameLayout)
         }
 
         binding.apply {
             fragment1Btn.setOnClickListener {
                 selectedFragment = ImageSearchFragment()
-                setFragment(selectedFragment!!)
+                setFragment(selectedFragment as ImageSearchFragment)
             }
             fragment2Btn.setOnClickListener {
                 selectedFragment = MyLockerFragment()
-                setFragment(selectedFragment!!)
+                setFragment(selectedFragment as MyLockerFragment)
             }
         }
     }
@@ -51,10 +48,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setFragment(fragment: Fragment) {
-        supportFragmentManager.commit {
-            replace(R.id.frameLayout, fragment, fragment::class.java.simpleName)
-            setReorderingAllowed(true)
-            addToBackStack(null)
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.frameLayout, fragment, fragment::class.java.simpleName)
+        transaction.setReorderingAllowed(true)
+
+        if (!fragment.isStateSaved) {
+            transaction.addToBackStack(null)
+            transaction.commit()
         }
     }
 
