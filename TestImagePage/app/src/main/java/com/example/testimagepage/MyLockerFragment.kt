@@ -1,8 +1,6 @@
 package com.example.testimagepage
 
-import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -50,26 +48,13 @@ class MyLockerFragment : Fragment() {
 
         myLockerAdapter = MyLockerAdapter(
             requireContext(),
-            likedImages.toMutableList()
-        ) { clickedImage ->
-            showDeleteDialog(clickedImage)
-        }
+            likedImages.toMutableList(),
+            onImageDeleteListener = { deletedImage ->
+                onImageDeleted(deletedImage)
+            }
+        )
 
         recyclerView.adapter = myLockerAdapter
-    }
-
-    private fun showDeleteDialog(deletedImage: KakaoImage) {
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("삭제 확인")
-            .setMessage("이 이미지를 정말로 삭제하시겠습니까?")
-            .setPositiveButton("예") { dialogInterface: DialogInterface, _: Int ->
-                onImageDeleted(deletedImage)
-                dialogInterface.dismiss()
-            }
-            .setNegativeButton("아니오") { dialogInterface: DialogInterface, _: Int ->
-                dialogInterface.dismiss()
-            }
-            .show()
     }
 
     private fun onImageDeleted(deletedImage: KakaoImage) {
@@ -77,11 +62,5 @@ class MyLockerFragment : Fragment() {
 
         val updatedLikedItemsJson = Gson().toJson(myLockerAdapter.getImages())
         sharedPreferences.edit().putString(sharedPreferencesKey, updatedLikedItemsJson).apply()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-        recyclerView.adapter = null
     }
 }

@@ -54,6 +54,9 @@ class ImageSearchAdapter(
                 likedItems.remove(kakaoImage)
             }
 
+            val imageResource = if (kakaoImage.isFavorite) R.drawable.ic_favorite else 0
+            holder.favoriteImageView.setImageResource(imageResource)
+
             holder.favoriteImageView.visibility =
                 if (kakaoImage.isFavorite) View.VISIBLE else View.GONE
 
@@ -61,6 +64,7 @@ class ImageSearchAdapter(
 
             onImageClickListener.invoke(kakaoImage)
         }
+
     }
 
     override fun getItemCount(): Int {
